@@ -16,16 +16,20 @@ def get_first(results):
     return result
 
 
-def connect():
+def connect(dbname):
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        db = psycopg2.connect("dbname=%s" % dbname)
+        return db
+    except:
+        raise IOError('Error connecting to database %s' % dbname)
 
 
 def execute_query(*args, **kwargs):
     """Executes a query, opening and closing connections.
        If a function is passed, executes a function to the cursor and return
        the results"""
-    conn = connect()
+    conn = connect("tournament")
     c = conn.cursor()
     c.execute(*args)
     if "fn" in kwargs:
